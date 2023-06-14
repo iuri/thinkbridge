@@ -8,14 +8,15 @@ from bs4 import BeautifulSoup
 from linkedin_api import Linkedin
 import pandas as pd
 
+import config
 
 app = Flask(__name__)
 
-# Amazon S3 credentials
-S3_BUCKET = 'your-s3-bucket-name'
-S3_ACCESS_KEY = 'your-access-key'
-S3_SECRET_KEY = 'your-secret-key'
 
+# Amazon S3 credentials
+S3_BUCKET = config.S3_BUCKET
+S3_ACCESS_KEY = config.S3_ACCESS_KEY
+S3_SECRET_KEY = config.S3_SECRET_KEY
 
 def save2S3(filename):
         
