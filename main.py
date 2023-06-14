@@ -1,5 +1,5 @@
 # https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
-from flask import Flask, request
+from flask import Flask, request, render_template
 import boto3
 
 import requests
@@ -35,10 +35,11 @@ def save2S3(filename):
 
 def save2csv(data, filename):
     df = pd.DataFrame(data.items(), columns=['Company Name', 'LinkedIn URL'])
-    df.to_csv(filename, index=False)
+    df.to_csv(filename, index=False)    
+    return 
 
 
-def get_linkedin_urls(company_names):
+def get_linkedin_urls_scrapper(company_names):
     # print(company_names)
     linkedin_urls = {}
     for company_name in company_names:
@@ -46,7 +47,11 @@ def get_linkedin_urls(company_names):
             # print(company_name)
             # Send a search query to LinkedIn
             search_url = f"https://www.linkedin.com/search/results/companies/?keywords={company_name}"
-            response = requests.get(search_url)
+
+            session = requests.Session()
+            session.auth = (config.LINKEDIN_USERNAME, config.LINKEDIN_PASSWORD)
+            auth = session.post(config.LINKEDIN_LOGIN_URL)
+            response = session.get(search_url)
 
             # Parse the HTML response
             soup = BeautifulSoup(response.content, 'html.parser')
@@ -70,7 +75,7 @@ def get_linkedin_urls(company_names):
 
 
 
-def get_linkedin_urls2(company_names):
+def get_linkedin_urls_api(company_names):
 
     # print(company_names)
     # Initialize the LinkedIn API client
@@ -99,42 +104,46 @@ def get_linkedin_urls2(company_names):
 
 
 
-@app.route('/upload', methods=['POST'])
-def process_csv():
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
     # print('request', request.files)
     # print(request.files['file'])
-    # Check if file was sent in the request
-    if 'file' not in request.files:
-        return 'No file uploaded.', 400
+    
+    if request.method == 'POST':
+    
+        # Check if file was sent in the request
+        if 'file' not in request.files:
+            return 'No file uploaded.', 400
 
-    file = request.files['file']
-    # Check if the file has a CSV extension
-    if not file.filename.endswith('.csv'):
-        return 'Invalid file format. Only CSV files are allowed.', 400
+        file = request.files['file']
+        # Check if the file has a CSV extension
+        if not file.filename.endswith('.csv'):
+            return 'Invalid file format. Only CSV files are allowed.', 400
 
-    try:
-        # Read the CSV file into a Pandas DataFrame
-        df = pd.read_csv(file)
+        try:
+            # Read the CSV file into a Pandas DataFrame
+            df = pd.read_csv(file)
 
-        # Perform your data processing operations on the DataFrame
-        # For example, let's capitalize all the column names
-        df.columns = df.columns.str.upper()
-        # print(df)
+            # Perform your data processing operations on the DataFrame
+            # For example, let's capitalize all the column names
+            df.columns = df.columns.str.upper()
+            # print(df)
 
-        data = df.iloc[:, 0].tolist() 
+            data = df.iloc[:, 0].tolist() 
+            # Retrieve data from AP or scrapper 
+            data = get_linkedin_urls_scrapper(data)
+            # data = get_linkedinapi_urls_api(data)
 
-        data = get_linkedin_urls(data)
-        # print(urls)
-
-        filename = 'linkedin_urls.csv'
-        # save2S3(filename)
-        save2csv(data, filename)
-
+            # save data. locally and/or S3
+            # save2S3(filename)
+            save2csv(data, 'linkedin_urls.csv')
+            
+            return f'CSV file processed and saved:', 200
         
+        except Exception as e:
+            return f'Error processing the CSV file: {str(e)}', 500
 
-        return True
-    except Exception as e:
-        return f'Error processing the CSV file: {str(e)}', 500
+    return render_template('upload.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
