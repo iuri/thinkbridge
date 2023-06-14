@@ -21,12 +21,27 @@ This is a Flask application that provides an API for processing CSV files and sa
 
 
 2. Navigate to the project directory:
-    ''''cd thinkbridge'''
+    ''''cd thinkbridge''''
 
 3. Install the required dependencies:
     ''''pip install -r requirements.txt''''
 
-4. Set up Amazon S3:
+4. Create a file named as config.py in the root directory of the application:
+    ''''touch config.py''''
+
+- Edit the file and add the following environment/global variables:
+    ''''
+    \# Amazon S3 credentials
+    S3_BUCKET = 'your-s3-bucket-name'
+    S3_ACCESS_KEY = 'your-access-key'
+    S3_SECRET_KEY = 'your-secret-key'
+
+    \# LinkedIn S3 credentials
+    LINKEDIN_USERNAME = 'your-username'
+    LINKEDIN_PASSWORD = 'your-password'
+    LINKEDIN_LOGIN_URL = 'linkedin-url'
+    ''''
+5. Set up Amazon S3:
 
 - Create an S3 bucket on Amazon Web Services.
 - Update the S3 bucket name, access key, and secret key in the Flask app code (`app.py`).
@@ -68,11 +83,11 @@ This project is licensed under the [GPL License](LICENSE).
 ## Initial Specification
 Please find below the coding assignment, as part of your technical evaluation. We understand that a proper solution would take days, but please remember, a perfect solution doesn't exist.
 We understand that this requires a frontend-backend solution. As a backend developer, your job will be to provide the backend solution. Use minimal frontend to supplement your backend solution if needed.
-Requirements:
-1. Give a CSV file of company names, create a python module that can find LinkedIn URLs for those companies. The LinkedIn URLs should be stored as a CSV file. And once that is done, extend the script using Playwright browser to find the employee count from LinkedIn and store it in the original file alongside the Company Names.
-1. Use any csv reader you want and any scraper you want to accomplish this.
+1. Requirements:
+1.1 Give a CSV file of company names, create a python module that can find LinkedIn URLs for those companies. The LinkedIn URLs should be stored as a CSV file. And once that is done, extend the script using Playwright browser to find the employee count from LinkedIn and store it in the original file alongside the Company Names.
+1.2. Use any csv reader you want and any scraper you want to accomplish this.
 
-2. The module entry point can be a POST API endpoint that accepts csv files and returns the file with company name and employee count or a CLI program.
+1.3. The module entry point can be a POST API endpoint that accepts csv files and returns the file with company name and employee count or a CLI program.
 
 
 2. Please ensure the following points as well: 1. All API calls should be asynchronous.
