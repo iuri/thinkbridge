@@ -38,8 +38,6 @@ This is a Flask application that provides an API for processing CSV files and sa
     ''''python3 app.py''''
 
 
-
-
 2. Open your web browser and go to `http://localhost:5000`.
 
 3. You will see a form where you can upload a CSV file.
@@ -49,6 +47,12 @@ This is a Flask application that provides an API for processing CSV files and sa
 5. The application will process the CSV file, generate a new processed CSV file, and upload it to the specified S3 bucket.
 
 6. Once the file is uploaded, the application will display a success message along with the local file saved in the current directory, plus the file must be successfully saved in the AWS S3 instance.
+
+
+<img width="1438" alt="Screen Shot 2023-06-14 at 5 33 10 PM" src="https://github.com/iuri/thinkbridge/assets/630005/204a694d-e585-4941-a64d-08db04c46845">
+
+
+
 
 ## License
 
