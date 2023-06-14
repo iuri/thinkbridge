@@ -28,7 +28,7 @@ def save2S3(filename):
         s3.upload_file(processed_file_path, S3_BUCKET, filename)
 
         # Return a success message with the S3 file URL
-        s3_file_url = f'https://{S3_BUCKET}.s3.amazonaws.com/{new_filename}'
+        s3_file_url = f'https://{S3_BUCKET}.s3.amazonaws.com/{filename}'
         return f'CSV file processed and saved to S3: {s3_file_url}', 200
 
 
