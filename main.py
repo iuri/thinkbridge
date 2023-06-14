@@ -1,4 +1,3 @@
-# https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
 from flask import Flask, request, render_template
 import boto3
 
